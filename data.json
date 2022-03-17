@@ -9,7 +9,7 @@
     },
     {
       "id_post": 1,
-      "judul": "Image Classification dengan CNN",
+      "judul": "Klasifikasi Gambar Menggunakan Algoritma CNN",
       "tanggal": "2022-03-17T10:07:57.210Z",
       "kategori": "Machine Learning",
       "deskripsi": "Project ini merupakan project yang menerapkan machine learning untuk melakukan image classification"
