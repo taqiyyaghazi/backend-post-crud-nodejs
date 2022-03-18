@@ -26,7 +26,7 @@ const requestListener = function (req, res) {
     //   API untuk Mengambil Selurah Data Postingan
     case "/get_all_post":
       console.log("HIT API Get All Post");
-
+      // Membaca json file
       fs.readFile("./data.json", "utf8", (err, jsonString) => {
         if (err) {
           console.log("File read failed:", err);
@@ -46,7 +46,7 @@ const requestListener = function (req, res) {
     case "/get_query_post":
       console.log("HIT API Get Query Post");
       const parameters_get = url.parse(req.url, true).query;
-
+      let data = undefined;
       fs.readFile("./data.json", "utf8", (err, jsonString) => {
         if (err) {
           console.log("File read failed:", err);
@@ -60,22 +60,23 @@ const requestListener = function (req, res) {
           ) {
             //   Mencari id_post yang sama dengan parameter id
             if (parameters_get["id"] == value["id_post"]) {
-              var data = JSON.parse(jsonString)["post"][index];
+              data = JSON.parse(jsonString)["post"][index];
               var response_payload = {
                 deskripsi: "Sukses mendapatkan data postingan",
                 result: data,
               };
               res.writeHead(200);
               res.end(JSON.stringify(response_payload));
-            } else {
-              // Respon ketika id yang dicari tidak ada
-              var response_payload = {
-                deskripsi: "Data tidak ditemukan",
-                result: "-",
-              };
-              res.end(JSON.stringify(response_payload));
             }
           });
+          if (data == undefined) {
+            //   // Respon ketika id yang dicari tidak ada
+            var response_payload = {
+              deskripsi: "Data tidak ditemukan",
+              result: "-",
+            };
+            res.end(JSON.stringify(response_payload));
+          }
         } else {
           // Respon ketika parameter id belum ditentukan
           var response_payload = {
@@ -138,7 +139,7 @@ const requestListener = function (req, res) {
 
     //  API Update Postingan
     case "/update_post":
-      console.log("HIT API Insert New Post");
+      console.log("HIT API Update Post");
       var body_update = [];
       req
         .on("data", (chunk) => {
@@ -146,7 +147,6 @@ const requestListener = function (req, res) {
         })
         .on("end", () => {
           body_update = JSON.parse(Buffer.concat(body_update).toString());
-          console.log(body_update);
 
           fs.readFile("./data.json", "utf8", (err, jsonString) => {
             if (err) {
@@ -160,7 +160,6 @@ const requestListener = function (req, res) {
               if (body_update["id_post"] in data["id"]) {
                 data["post"].forEach(function (value, index, array) {
                   if (value["id_post"] == body_update["id_post"]) {
-                    console.log(index);
                     if ("judul" in body_update) {
                       data["post"][index]["judul"] = body_update["judul"];
                     }
@@ -234,12 +233,13 @@ const requestListener = function (req, res) {
               });
             }
           });
-
-          var response_payload = {
-            deskripsi: "Data Tidak Ditemukan",
-            result: "-",
-          };
-          res.end(JSON.stringify(response_payload));
+          if (data["post"].length == JSON.parse(jsonString)["post"].length) {
+            var response_payload = {
+              deskripsi: "Data Tidak Ditemukan",
+              result: "-",
+            };
+            res.end(JSON.stringify(response_payload));
+          }
         } else {
           // Respon ketika parameter id belum ditentukan
           console.log("ID belum ditentukan");
