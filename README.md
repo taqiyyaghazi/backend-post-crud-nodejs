@@ -73,7 +73,7 @@ Start the server
 | `kategori`  | `string` | Category of item post                       |
 | `deskripsi` | `string` | Description of item post                    |
 
-#### Update post
+#### Delete post
 
 ```http
   DELETE /delete_data_post
